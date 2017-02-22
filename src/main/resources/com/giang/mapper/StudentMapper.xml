@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+  'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+
+<mapper namespace='com.giang.mapper.StudentMapper'>
+
+	<!-- begin init resultMap -->
+	<resultMap type='Student' id='studentResult'>
+		<id property='student_id' column='student_id' />
+		<result property='student_name' column='student_name' />
+		<result property='student_code' column='student_code' />
+		<result property='address' column='address' />
+		<result property='average_score' column='average_score' />
+		<result property='date_of_birth' column='date_of_birth' />
+	</resultMap>
+	<!-- end init resultMap -->
+
+	<!-- begin method showStudents -->
+	<select id='showStudents' resultMap='studentResult'>
+		SELECT a.student_id,
+		a.student_name, a.student_code,
+		b.address, b.average_score,
+		b.date_of_birth
+		FROM STUDENT a, STUDENT_INFO
+		b
+		WHERE a.student_id =
+		b.student_id
+	</select>
+	<!-- end method showStudents -->
+
+
+	<!-- begin method showStudentsbyPage -->
+	<select id='showStudentsbyPage' resultMap='studentResult'>
+		SELECT a.student_id,
+		a.student_name, a.student_code,
+		b.address, b.average_score,
+		b.date_of_birth
+		FROM STUDENT a, STUDENT_INFO
+		b
+		WHERE a.student_id =
+		b.student_id
+		LIMIT #{start}, #{limit}
+	</select>
+	<!-- end method showStudentsbyPage -->
+
+	<!-- begin method insertStudent -->
+	<insert id="insertStudent" useGeneratedKeys="true" keyProperty="student_id"
+		parameterType="Student" keyColumn="student_id">
+		INSERT INTO
+		STUDENT(student_name,student_code)
+		VALUES(#{student_name},#{student_code})
+	</insert>
+	<!-- end method insertStudent -->
+
+	<!-- begin method insertStudentInfo -->
+	<insert id="insertStudentInfo" useGeneratedKeys="true"
+		keyProperty="student_id" keyColumn="student_id">
+		INSERT INTO
+		STUDENT_INFO(student_id, address,
+		average_score, date_of_birth)
+		VALUES(#{student_id}, #{address},
+		#{average_score}, #{date_of_birth} )
+	</insert>
+	<!-- end method insertStudentInfo -->
+
+
+	<!-- begin method getLastIdStudent -->
+	<select id="getLastIdStudent" resultType="int">
+		select last_insert_id()
+	</select>
+	<!-- end method getLastIdStudent -->
+
+	<!-- begin method getLastIdStudent -->
+	<select id="getLastIdStudentByNamTable" resultType="int" parameterType="String">
+		SELECT `AUTO_INCREMENT`
+		FROM INFORMATION_SCHEMA.TABLES
+		WHERE TABLE_SCHEMA = #{nameDatabase}
+		AND TABLE_NAME = #{nameTable}
+	</select>
+	<!-- end method getLastIdStudent -->
+
+
+	<!-- begin method deleteStudentById -->
+	<delete id="deleteStudentById">
+		DELETE FROM STUDENT WHERE student_id= #{student_id}
+	</delete>
+	<!-- end method deleteStudentById -->
+
+	<!-- begin method deleteStudentInfoById -->
+	<delete id="deleteStudentInfoById">
+		DELETE FROM STUDENT_INFO WHERE
+		student_id=#{student_id}
+	</delete>
+	<!-- end method deleteStudentInfoById -->
+
+	<!-- begin method findStudentById -->
+	<select id='findStudentById' resultMap='studentResult'>
+		SELECT a.STUDENT_ID,
+		a.STUDENT_NAME, a.STUDENT_CODE, b.ADDRESS, b.AVERAGE_SCORE,
+		b.DATE_OF_BIRTH
+		FROM STUDENT a, STUDENT_INFO b
+		WHERE a.student_id =
+		#{student_id} AND
+		b.student_id = #{student_id}
+	</select>
+	<!-- end method findStudentById -->
+
+	<!-- begin method updateStudentById -->
+	<update id="updateStudentById">
+		UPDATE STUDENT, STUDENT_INFO
+		SET student_name =
+		#{student_name},
+		student_code = #{student_code},
+		address = #{address},
+		average_score = #{average_score},
+		date_of_birth = #{date_of_birth}
+		WHERE STUDENT.student_id=STUDENT_INFO.student_id AND
+		STUDENT.student_id=#{student_id}
+	</update>
+	<!-- end method updateStudentById -->
+
+	<!-- begin method countStudents -->
+	<select id='countStudents' resultType='int'>
+		SELECT COUNT(*)
+		FROM
+		STUDENT a, STUDENT_INFO b
+		WHERE a.student_id = b.student_id
+	</select>
+	<!-- end method countStudents -->
+
+	<!-- begin method findStudentsbyName -->
+	<!-- 
+	<select id='findStudentsbyName' resultMap='studentResult'>
+		SELECT a.student_id,
+		a.student_name, a.student_code, b.address, b.average_score,
+		b.date_of_birth
+		FROM STUDENT a, STUDENT_INFO b
+		WHERE
+		a.student_id=b.student_id and a.student_name like '%${student_name}%'
+		LIMIT #{start}, #{limit}
+	</select>
+	-->
+	<!-- end method findStudentByName --> 
+
+<!-- //////////////////////////////////////////////////////////////////////////////////////// -->
+<select id='findStudentsbyName' resultMap='studentResult' parameterType="double">
+		SELECT a.student_id,
+		a.student_name, a.student_code, b.address, b.average_score,
+		b.date_of_birth
+		FROM STUDENT a, STUDENT_INFO b
+		WHERE
+		a.student_id=b.student_id and b.average_score &gt;= #{average_score}
+		LIMIT #{start}, #{limit}
+	</select>
+
+<!-- begin method countStudents -->
+	<select id='countStudentsByName' resultType='int'>
+		SELECT COUNT(*)
+		FROM
+		STUDENT a, STUDENT_INFO b
+		WHERE a.student_id = b.student_id and
+		b.average_score &gt;= #{average_score}
+	</select>
+	
+	<!-- end method countStudents -->
+<!-- //////////////////////////////////////////////////////////////////////////////////////// -->
+	<!-- begin method countStudents -->
+	<!--  
+	<select id='countStudentsByName' resultType='int'>
+		SELECT COUNT(*)
+		FROM
+		STUDENT a, STUDENT_INFO b
+		WHERE a.student_id = b.student_id and
+		a.student_name like '%${student_name}%'
+	</select>
+	-->
+	<!-- end method countStudents -->
+</mapper>
