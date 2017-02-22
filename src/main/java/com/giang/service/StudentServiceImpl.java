@@ -53,7 +53,7 @@ public class StudentServiceImpl implements StudentService {
 			mapper.deleteStudentInfoById(student_id);
 			mapper.deleteStudentById(student_id);
 			//test transaction
-			int test=Integer.parseInt("aaaaaaa");
+			//int test=Integer.parseInt("aaaaaaa");
 			session.commit();
 		} catch (Exception ex) {
 			System.out.println(ex);
